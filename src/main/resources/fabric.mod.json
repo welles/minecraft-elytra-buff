@@ -9,6 +9,11 @@
   ],
   "license": "MIT",
   "environment": "*",
+  "entrypoints": {
+    "main": [
+      "dev.welles.elytrabuff.ElytraBuffFabric"
+    ]
+  },
   "depends": {
     "fabricloader": ">=${loader}",
     "fabric-api": "*",
