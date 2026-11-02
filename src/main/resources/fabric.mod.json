@@ -12,8 +12,14 @@
   "entrypoints": {
     "main": [
       "dev.welles.elytrabuff.ElytraBuffFabric"
+    ],
+    "client": [
+      "dev.welles.elytrabuff.ElytraBuffFabricClient"
     ]
   },
+  "mixins": [
+    "elytrabuff.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=${loader}",
     "fabric-api": "*",

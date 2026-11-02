@@ -18,10 +18,12 @@ import java.util.Properties;
 public final class BuffConfig {
     public static final double MAX_CHARGE_TIME = 30.0;
     public static final double MAX_LAUNCH_HEIGHT = 64.0;
+    public static final double MAX_ENERGY_BONUS = 2.0;
 
     public boolean coldStart = true;
     public double chargeTime = 3.0;
     public double launchHeight = 10.0;
+    public double energyBonus = 0.2;
 
     private static final String HEADER = """
         Elytra Buff configuration
@@ -31,7 +33,10 @@ public final class BuffConfig {
         coldStart     true = crouch on the ground with an elytra on to charge a cold start, release crouch to launch
         chargeTime    How long to crouch until the cold start is charged, in seconds. Smoke rises after 1 second,
                       flames and a hiss show that it is charged. 0.5 to 30.
-        launchHeight  How high a cold start throws the player, in blocks. 1 to 64.""";
+        launchHeight  How high a cold start throws the player, in blocks. 1 to 64.
+        energyBonus   Extra speed gained from losing height while flying, as a fraction of the energy that the descent
+                      gives in vanilla. 0.2 = 20 % more, enough to keep flying forever by diving and pulling up again.
+                      0 = vanilla. 0 to 2. Only applies to players that have the mod installed on their client.""";
 
     private static Path file;
     private static FileTime loadedAt;
@@ -96,6 +101,7 @@ public final class BuffConfig {
         if (value != null) coldStart = Boolean.parseBoolean(value.trim());
         chargeTime = readNumber(props, "chargeTime", chargeTime, 0.5, MAX_CHARGE_TIME);
         launchHeight = readNumber(props, "launchHeight", launchHeight, 1.0, MAX_LAUNCH_HEIGHT);
+        energyBonus = readNumber(props, "energyBonus", energyBonus, 0.0, MAX_ENERGY_BONUS);
         return props.keySet().containsAll(toProperties().keySet());
     }
 
@@ -125,6 +131,7 @@ public final class BuffConfig {
         props.put("coldStart", String.valueOf(coldStart));
         props.put("chargeTime", String.valueOf(chargeTime));
         props.put("launchHeight", String.valueOf(launchHeight));
+        props.put("energyBonus", String.valueOf(energyBonus));
         return props;
     }
 }

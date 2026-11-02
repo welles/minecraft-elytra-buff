@@ -10,6 +10,9 @@ version = "${version}"
 authors = "Nico Welles"
 description = "Buffs flying with an elytra: crouch for a few seconds to cold start into the air, and diving regains a little more speed, so a flight can go on forever."
 
+[[mixins]]
+config = "elytrabuff.mixins.json"
+
 [[dependencies.${id}]]
 modId = "minecraft"
 type = "required"

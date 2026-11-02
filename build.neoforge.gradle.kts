@@ -59,6 +59,11 @@ tasks {
 
         filesMatching("META-INF/neoforge.mods.toml") { expand(props) }
 
+        val mixinJava = "JAVA_${requiredJava.majorVersion}"
+        val mixins = listOf("LivingEntityMixin").joinToString(", ") { "\"$it\"" }
+        inputs.property("mixins", mixins)
+        filesMatching("*.mixins.json") { expand("java" to mixinJava, "mixins" to mixins) }
+
         exclude("fabric.mod.json")
     }
 

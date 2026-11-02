@@ -1,0 +1,9 @@
+{
+  "required": true,
+  "package": "dev.welles.elytrabuff.mixin",
+  "compatibilityLevel": "${java}",
+  "mixins": [${mixins}],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
