@@ -69,8 +69,17 @@ public final class ElytraBuff {
 
     /** Sends a payload to the other players in the player's world that have the client mod. */
     static void sendToOthers(ServerPlayer player, CustomPacketPayload payload) {
+        sendToWorld(player, payload, false);
+    }
+
+    /** Sends a payload to everyone in the player's world that has the client mod, including the player. */
+    static void sendToAll(ServerPlayer player, CustomPacketPayload payload) {
+        sendToWorld(player, payload, true);
+    }
+
+    private static void sendToWorld(ServerPlayer player, CustomPacketPayload payload, boolean includingPlayer) {
         for (ServerPlayer other : ((ServerLevel) player.level()).players()) {
-            if (other != player && SENT_SETTINGS.containsKey(other)) network.send(other, payload);
+            if ((includingPlayer || other != player) && SENT_SETTINGS.containsKey(other)) network.send(other, payload);
         }
     }
 

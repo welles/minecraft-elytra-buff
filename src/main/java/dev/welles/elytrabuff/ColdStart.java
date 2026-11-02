@@ -1,5 +1,6 @@
 package dev.welles.elytrabuff;
 
+import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerLevel;
@@ -7,6 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Map;
@@ -16,19 +18,25 @@ import java.util.WeakHashMap;
 /*import net.minecraft.world.entity.LivingEntity;
 *///?} else {
 import net.minecraft.world.item.ElytraItem;
+//?}
+//? if <26.1 {
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 //?}
 
 /**
- * Crouching on the ground with an elytra on charges a cold start: smoke rises from the player's feet after a second,
- * flames and a hiss follow once it is charged. Releasing crouch then throws the player into the air, high enough to
- * open the elytra. Runs on the server only, so it works for players without the client mod as well.
+ * Crouching on the ground with an elytra on charges a cold start, like gathering strength for one mighty wing beat:
+ * after a second the air starts to stir around the player's feet, once it is charged feathers drift off the wings and
+ * they rustle. Releasing crouch then beats the wings down in a gust of wind and feathers, throwing the player into the
+ * air high enough to open the elytra. Runs on the server, so it works for players without the client mod as well;
+ * clients with the mod also raise the wings while charging and beat them down for the launch.
  */
 public final class ColdStart {
     private static final int TICKS_PER_SECOND = 20;
-    private static final int SMOKE_DELAY = TICKS_PER_SECOND;
-    private static final int HISS_INTERVAL = TICKS_PER_SECOND;
+    private static final int WIND_DELAY = TICKS_PER_SECOND;
+    private static final int RUSTLE_INTERVAL = TICKS_PER_SECOND;
+    private static final int FEATHER_INTERVAL = 4;
+    /** Directions the gust of the launch blows out along the ground. */
+    private static final int GUST_DIRECTIONS = 16;
     /** Vertical drag of a player in the air, see {@code LivingEntity#travelInAir}. */
     private static final double AIR_DRAG = 0.98;
 
@@ -44,11 +52,13 @@ public final class ColdStart {
 
         if (ready && player.isShiftKeyDown()) {
             CHARGE.put(player, ++charge);
+            if (charge == 1) ElytraBuff.sendToAll(player, new ColdStartPayload(player.getId(), ColdStartPayload.Phase.CHARGE, chargeTicks));
             showCharge(player, charge, chargeTicks);
             return;
         }
         CHARGE.remove(player);
         if (ready && charge >= chargeTicks) launch(player, config.launchHeight);
+        else if (charge > 0) ElytraBuff.sendToAll(player, new ColdStartPayload(player.getId(), ColdStartPayload.Phase.CANCEL, 0));
     }
 
     /** Standing on the ground with an elytra that can fly, not swimming, riding or flying in creative mode. */
@@ -75,15 +85,17 @@ public final class ColdStart {
         double y = player.getY() + 0.1;
         double z = player.getZ();
 
-        if (charge >= Math.min(SMOKE_DELAY, chargeTicks)) {
-            // thickens while charging
-            int smoke = 1 + (int) (3.0 * Math.min(charge, chargeTicks) / chargeTicks);
-            level.sendParticles(ParticleTypes.SMOKE, x, y, z, smoke, 0.25, 0.05, 0.25, 0.01);
+        if (charge >= Math.min(WIND_DELAY, chargeTicks)) {
+            // stirs more and more while charging: every 4th tick at first, every tick once charged
+            int interval = 4 - 3 * Math.min(charge, chargeTicks) / chargeTicks;
+            if (charge % interval == 0) level.sendParticles(ParticleTypes.CLOUD, x, y, z, 1, 0.4, 0.02, 0.4, 0.02);
         }
         if (charge >= chargeTicks) {
-            level.sendParticles(ParticleTypes.FLAME, x, y, z, 2, 0.2, 0.02, 0.2, 0.01);
-            if ((charge - chargeTicks) % HISS_INTERVAL == 0) {
-                level.playSound(null, x, y, z, SoundEvents.FIRE_EXTINGUISH, SoundSource.PLAYERS, 0.6F, 1.6F);
+            if ((charge - chargeTicks) % FEATHER_INTERVAL == 0) {
+                level.sendParticles(feather(), x, player.getY() + 1.2, z, 1, 0.3, 0.2, 0.3, 0.02);
+            }
+            if ((charge - chargeTicks) % RUSTLE_INTERVAL == 0) {
+                level.playSound(null, x, y, z, SoundEvents.ARMOR_EQUIP_ELYTRA.value(), SoundSource.PLAYERS, 0.8F, 0.8F);
             }
         }
     }
@@ -94,13 +106,30 @@ public final class ColdStart {
         // the client moves its player itself, like after knockback it has to be told the new movement
         player.connection.send(new ClientboundSetEntityMotionPacket(player));
 
+        ElytraBuff.sendToAll(player, new ColdStartPayload(player.getId(), ColdStartPayload.Phase.LAUNCH, 0));
+
         ServerLevel level = (ServerLevel) player.level();
         double x = player.getX();
         double y = player.getY() + 0.1;
         double z = player.getZ();
-        level.sendParticles(ParticleTypes.FLAME, x, y, z, 20, 0.3, 0.05, 0.3, 0.08);
-        level.sendParticles(ParticleTypes.LARGE_SMOKE, x, y, z, 12, 0.3, 0.05, 0.3, 0.05);
-        level.playSound(null, x, y, z, SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.PLAYERS, 1.0F, 0.8F);
+        // a gust blows out along the ground in every direction; with a count of 0 the offset is the particle's direction
+        for (int i = 0; i < GUST_DIRECTIONS; i++) {
+            double angle = Math.PI * 2.0 * i / GUST_DIRECTIONS;
+            level.sendParticles(ParticleTypes.CLOUD, x, y, z, 0, Math.cos(angle), 0.05, Math.sin(angle), 0.35);
+        }
+        level.sendParticles(ParticleTypes.CLOUD, x, y, z, 8, 0.4, 0.1, 0.4, 0.05);
+        level.sendParticles(feather(), x, player.getY() + 1.2, z, 12, 0.4, 0.3, 0.4, 0.15);
+        level.playSound(null, x, y, z, SoundEvents.ENDER_DRAGON_FLAP, SoundSource.PLAYERS, 1.0F, 1.2F);
+        level.playSound(null, x, y, z, SoundEvents.WIND_CHARGE_BURST.value(), SoundSource.PLAYERS, 0.5F, 1.0F);
+    }
+
+    /** Bits of feather, like those of a feather item breaking. */
+    private static ItemParticleOption feather() {
+        //? if >=26.1 {
+        /*return new ItemParticleOption(ParticleTypes.ITEM, Items.FEATHER);
+        *///?} else {
+        return new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(Items.FEATHER));
+        //?}
     }
 
     /** The upward speed that lifts a player by {@code height} blocks, found by simulating the jump. */

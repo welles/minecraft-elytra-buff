@@ -5,10 +5,11 @@ to start, lets a flight go on forever and lets you flap the wings for extra spee
 
 - **Cold start** – take off from the ground without fireworks or a cliff. With an elytra on, crouch while standing
   on the ground:
-  - after 1 second smoke starts rising from your feet and gets thicker,
-  - after 3 seconds (configurable) flames join it and a hiss plays: the cold start is charged.
-  - Release crouch to be thrown into the air, 10 blocks high by default, with a burst of flames and a rocket sound.
-    Press jump in the air to open the elytra and fly off like after jumping from a cliff.
+  - your wings slowly rise, gathering strength for one mighty wing beat,
+  - after 1 second the air starts to stir around your feet, more and more,
+  - after 3 seconds (configurable) feathers drift off the wings and they rustle: the cold start is charged.
+  - Release crouch to beat the wings down and be thrown into the air, 10 blocks high by default, in a gust of wind
+    and feathers. Press jump in the air to open the elytra and fly off like after jumping from a cliff.
   - Releasing crouch early, leaving the ground, taking off the elytra or getting into water cancels the charge.
     Elytras that are about to break cannot cold start, just like they cannot glide.
 - **Endless flight** – in vanilla, diving turns height into speed, but drag always takes a bit more than climbing back
@@ -17,11 +18,13 @@ to start, lets a flight go on forever and lets you flap the wings for extra spee
   with a good rhythm (dive at about 30–40°, climb at about 40–50°) you slowly climb higher. Climbing works like in
   vanilla, and very steep dives still lose more to drag than they gain, so flying still needs a bit of skill.
 - **Wing flaps** – crouch while flying to flap the wings: like a weak firework rocket, flapping pushes you along the
-  direction you look, with a flapping sound and a puff of clouds at every wing beat. The push gets weaker
-  the faster you already fly and never gets you as fast as a firework.
-  The wings visibly beat, for yourself in third person and for other players that have the mod on their client.
+  direction you look, with a flapping sound at every wing beat. The push gets weaker the faster you already
+  fly and never gets you as fast as a firework.
   - The wings tire out after 3 seconds of flapping (configurable) and need 5 seconds (configurable) to recover.
   - Releasing crouch earlier lets them recover from the time flapped so far, without waiting for the full cooldown.
+
+The wings move along with the cold start and the wing flaps, for yourself in third person and for other players.
+This needs the mod on the client of the player watching.
 
 No items, blocks or textures are added.
 
@@ -45,7 +48,7 @@ All settings are decided by the server: in multiplayer the server's values apply
 | Key            | Default | Description                                                                                                                                                 |
 |----------------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `coldStart`    | `true`  | Crouch on the ground with an elytra on to charge a cold start, release crouch to launch. `false` = crouching does nothing special.                         |
-| `chargeTime`   | `3.0`   | How long to crouch until the cold start is charged, in seconds. Smoke rises after 1 second, flames and a hiss show that it is charged. `0.5` to `30`.     |
+| `chargeTime`   | `3.0`   | How long to crouch until the cold start is charged, in seconds. The air starts to stir after 1 second, feathers and rustling show that it is charged. `0.5` to `30`. |
 | `launchHeight` | `10.0`  | How high a cold start throws the player, in blocks. `1` to `64`.                                                                                            |
 | `energyBonus`  | `0.2`   | Extra speed gained from losing height while flying, as a fraction of the energy the descent gives in vanilla. `0.2` = 20 % more, `0` = vanilla. `0` to `2`. |
 | `wingFlaps`    | `true`  | Crouch while flying to flap the wings and speed up, like with a weak firework rocket. `false` = crouching in flight does nothing special.                   |

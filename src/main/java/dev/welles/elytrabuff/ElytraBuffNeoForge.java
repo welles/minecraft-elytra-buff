@@ -33,7 +33,8 @@ public class ElytraBuffNeoForge {
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
         event.registrar("1").optional()
             .playToClient(FlightSettings.TYPE, FlightSettings.CODEC, (payload, context) -> ElytraBuff.setClientSettings(payload))
-            .playToClient(FlapPayload.TYPE, FlapPayload.CODEC, (payload, context) -> WingFlaps.setClientFlapping(payload));
+            .playToClient(FlapPayload.TYPE, FlapPayload.CODEC, (payload, context) -> WingAnimation.onFlap(payload))
+            .playToClient(ColdStartPayload.TYPE, ColdStartPayload.CODEC, (payload, context) -> WingAnimation.onColdStart(payload));
     }
 }
 *///?}

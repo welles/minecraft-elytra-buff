@@ -38,8 +38,8 @@ public final class BuffConfig {
         All settings are decided by the server (in multiplayer the server's values apply).
 
         coldStart     true = crouch on the ground with an elytra on to charge a cold start, release crouch to launch
-        chargeTime    How long to crouch until the cold start is charged, in seconds. Smoke rises after 1 second,
-                      flames and a hiss show that it is charged. 0.5 to 30.
+        chargeTime    How long to crouch until the cold start is charged, in seconds. The air starts to stir after
+                      1 second, drifting feathers and rustling wings show that it is charged. 0.5 to 30.
         launchHeight  How high a cold start throws the player, in blocks. 1 to 64.
         energyBonus   Extra speed gained from losing height while flying, as a fraction of the energy that the descent
                       gives in vanilla. 0.2 = 20 % more, enough to keep flying forever by diving and pulling up again.
