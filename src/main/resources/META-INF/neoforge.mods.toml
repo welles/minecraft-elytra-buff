@@ -1,0 +1,18 @@
+license = "MIT"
+
+modLoader = "javafml"
+loaderVersion = "[1,)"
+
+[[mods]]
+modId = "${id}"
+displayName = "${name}"
+version = "${version}"
+authors = "Nico Welles"
+description = "Buffs flying with an elytra: crouch for a few seconds to cold start into the air, and diving regains a little more speed, so a flight can go on forever."
+
+[[dependencies.${id}]]
+modId = "minecraft"
+type = "required"
+versionRange = "${minecraft}"
+ordering = "NONE"
+side = "BOTH"
