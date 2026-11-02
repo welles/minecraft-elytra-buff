@@ -22,7 +22,8 @@ public class ElytraBuffNeoForgeClient {
         });
         // "Config" button in the mod list
         container.registerExtensionPoint(IConfigScreenFactory.class, (mod, parent) -> new ConfigScreen(
-            parent, FMLPaths.CONFIGDIR.get().resolve(ElytraBuff.MOD_ID + ".properties"), Component.literal(mod.getModInfo().getDisplayName())
+            parent, FMLPaths.CONFIGDIR.get().resolve(ElytraBuff.MOD_ID + ".properties"), Component.literal(mod.getModInfo().getDisplayName()),
+            BuffConfig.defaults(), BuffConfig.RANGES
         ));
     }
 }

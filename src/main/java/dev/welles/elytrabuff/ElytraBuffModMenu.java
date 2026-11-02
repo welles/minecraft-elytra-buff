@@ -13,7 +13,9 @@ public class ElytraBuffModMenu implements ModMenuApi {
         return parent -> new ConfigScreen(
             parent,
             FabricLoader.getInstance().getConfigDir().resolve(ElytraBuff.MOD_ID + ".properties"),
-            Component.literal(FabricLoader.getInstance().getModContainer(ElytraBuff.MOD_ID).map(mod -> mod.getMetadata().getName()).orElse(ElytraBuff.MOD_ID))
+            Component.literal(FabricLoader.getInstance().getModContainer(ElytraBuff.MOD_ID).map(mod -> mod.getMetadata().getName()).orElse(ElytraBuff.MOD_ID)),
+            BuffConfig.defaults(),
+            BuffConfig.RANGES
         );
     }
 }

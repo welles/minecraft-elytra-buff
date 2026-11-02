@@ -43,6 +43,8 @@ client with the mod on a server without it flies like in vanilla too. On Fabric,
 `config/elytrabuff.properties` is created on first start. Changes are applied automatically while the game is running.
 It can also be edited in game: on NeoForge in *Mods → Elytra Buff → Config*, on Fabric through
 [Mod Menu](https://modrinth.com/mod/modmenu).
+Values outside their range are marked red and cannot be saved; every value can be reset to its default, one at a time
+or all at once.
 All settings are decided by the server: in multiplayer the server's values apply.
 
 | Key            | Default | Description                                                                                                                                                 |

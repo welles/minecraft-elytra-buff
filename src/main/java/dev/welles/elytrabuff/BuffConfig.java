@@ -16,12 +16,15 @@ import java.util.Properties;
  * The file is re-read automatically whenever it changes on disk.
  */
 public final class BuffConfig {
-    public static final double MAX_CHARGE_TIME = 30.0;
-    public static final double MAX_LAUNCH_HEIGHT = 64.0;
-    public static final double MAX_ENERGY_BONUS = 2.0;
-    public static final double MAX_FLAP_STRENGTH = 0.5;
-    public static final double MAX_FLAP_TIME = 30.0;
-    public static final double MAX_FLAP_COOLDOWN = 60.0;
+    /** The allowed values of each number setting; values outside are clamped. */
+    public static final Map<String, Range> RANGES = Map.of(
+        "chargeTime", new Range(0.5, 30.0),
+        "launchHeight", new Range(1.0, 64.0),
+        "energyBonus", new Range(0.0, 2.0),
+        "flapStrength", new Range(0.0, 0.5),
+        "flapTime", new Range(0.5, 30.0),
+        "flapCooldown", new Range(0.0, 60.0)
+    );
 
     public boolean coldStart = true;
     public double chargeTime = 3.0;
@@ -113,24 +116,24 @@ public final class BuffConfig {
     private boolean read(Properties props) {
         String value = props.getProperty("coldStart");
         if (value != null) coldStart = Boolean.parseBoolean(value.trim());
-        chargeTime = readNumber(props, "chargeTime", chargeTime, 0.5, MAX_CHARGE_TIME);
-        launchHeight = readNumber(props, "launchHeight", launchHeight, 1.0, MAX_LAUNCH_HEIGHT);
-        energyBonus = readNumber(props, "energyBonus", energyBonus, 0.0, MAX_ENERGY_BONUS);
+        chargeTime = readNumber(props, "chargeTime", chargeTime);
+        launchHeight = readNumber(props, "launchHeight", launchHeight);
+        energyBonus = readNumber(props, "energyBonus", energyBonus);
         value = props.getProperty("wingFlaps");
         if (value != null) wingFlaps = Boolean.parseBoolean(value.trim());
-        flapStrength = readNumber(props, "flapStrength", flapStrength, 0.0, MAX_FLAP_STRENGTH);
-        flapTime = readNumber(props, "flapTime", flapTime, 0.5, MAX_FLAP_TIME);
-        flapCooldown = readNumber(props, "flapCooldown", flapCooldown, 0.0, MAX_FLAP_COOLDOWN);
+        flapStrength = readNumber(props, "flapStrength", flapStrength);
+        flapTime = readNumber(props, "flapTime", flapTime);
+        flapCooldown = readNumber(props, "flapCooldown", flapCooldown);
         return props.keySet().containsAll(toProperties().keySet());
     }
 
-    /** Reads a number clamped to {@code min} to {@code max}, keeps {@code fallback} if it is missing or not a number. */
-    private static double readNumber(Properties props, String key, double fallback, double min, double max) {
+    /** Reads a number clamped to its range, keeps {@code fallback} if it is missing or not a number. */
+    private static double readNumber(Properties props, String key, double fallback) {
         String value = props.getProperty(key);
         if (value == null) return fallback;
         try {
             double parsed = Double.parseDouble(value.trim());
-            if (!Double.isNaN(parsed)) return Math.clamp(parsed, min, max);
+            if (!Double.isNaN(parsed)) return RANGES.get(key).clamp(parsed);
         } catch (NumberFormatException ignored) {
         }
         ElytraBuff.LOGGER.warn("Invalid {} '{}' in {}, using {}", key, value.trim(), file, fallback);
@@ -145,6 +148,11 @@ public final class BuffConfig {
         }
     }
 
+    /** The default value of every setting, as written to the file. */
+    public static Map<String, String> defaults() {
+        return new BuffConfig().toProperties();
+    }
+
     private Map<String, String> toProperties() {
         Map<String, String> props = new LinkedHashMap<>();
         props.put("coldStart", String.valueOf(coldStart));
@@ -156,5 +164,15 @@ public final class BuffConfig {
         props.put("flapTime", String.valueOf(flapTime));
         props.put("flapCooldown", String.valueOf(flapCooldown));
         return props;
+    }
+
+    public record Range(double min, double max) {
+        public double clamp(double value) {
+            return Math.clamp(value, min, max);
+        }
+
+        public boolean contains(double value) {
+            return value >= min && value <= max;
+        }
     }
 }
