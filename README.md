@@ -1,3 +1,5 @@
+<img src="src/main/resources/assets/elytrabuff/icon.png" alt="" width="128" align="right">
+
 # Elytra Buff
 
 A Minecraft mod for **Fabric** and **NeoForge** (Minecraft 1.21.1 – 26.3) that makes flying with an elytra easier
