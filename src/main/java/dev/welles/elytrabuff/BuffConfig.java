@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -25,6 +26,8 @@ public final class BuffConfig {
         "flapTime", new Range(0.5, 30.0),
         "flapCooldown", new Range(0.0, 60.0)
     );
+    /** The allowed values of each setting with a fixed set of them. */
+    public static final Map<String, List<String>> CHOICES = Map.of();
 
     public boolean coldStart = true;
     public double chargeTime = 3.0;

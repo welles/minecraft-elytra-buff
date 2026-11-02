@@ -25,8 +25,8 @@ import java.util.regex.Pattern;
 
 /**
  * Edits the mod's properties file, opened with the "Config" button of NeoForge's mod list. Booleans get an on/off
- * button, all other values a text field; numbers are checked against their range while typing, and the config can only
- * be saved once every value is valid. Every value can be reset to its default, one at a time or all at once. Saving
+ * button, all other values a text field; numbers are checked against their range and choices against the values they
+ * allow while typing, and the config can only be saved once every value is valid. Every value can be reset to its default, one at a time or all at once. Saving
  * only replaces the values in the file and keeps its comments, the mod picks the changes up like any other edit of the
  * file. The descriptions in the file's header are shown as tooltips.
  */
@@ -47,6 +47,7 @@ public class ConfigScreen extends Screen {
     private final Path file;
     private final Map<String, String> defaults;
     private final Map<String, BuffConfig.Range> ranges;
+    private final Map<String, List<String>> choices;
     private final List<String> lines = new ArrayList<>();
     private final List<Entry> entries = new ArrayList<>();
     private Button doneButton;
@@ -55,13 +56,16 @@ public class ConfigScreen extends Screen {
     /**
      * @param defaults the default value of each key, keys without one cannot be reset
      * @param ranges   the allowed values of number keys, keys without one accept any number
+     * @param choices  the allowed values of text keys, compared ignoring case; keys without them accept any text
      */
-    public ConfigScreen(Screen parent, Path file, Component title, Map<String, String> defaults, Map<String, BuffConfig.Range> ranges) {
+    public ConfigScreen(Screen parent, Path file, Component title, Map<String, String> defaults, Map<String, BuffConfig.Range> ranges,
+                        Map<String, List<String>> choices) {
         super(title);
         this.parent = parent;
         this.file = file;
         this.defaults = defaults;
         this.ranges = ranges;
+        this.choices = choices;
         load();
     }
 
@@ -75,7 +79,7 @@ public class ConfigScreen extends Screen {
                 int separator = line.indexOf('=');
                 if (line.startsWith("#") || separator < 0) continue;
                 String key = line.substring(0, separator).trim();
-                if (props.containsKey(key)) entries.add(new Entry(key, props.getProperty(key), defaults.get(key), ranges.get(key)));
+                if (props.containsKey(key)) entries.add(new Entry(key, props.getProperty(key), defaults.get(key), ranges.get(key), choices.get(key)));
             }
 
             Map<String, Entry> byKey = new HashMap<>();
@@ -246,14 +250,16 @@ public class ConfigScreen extends Screen {
         final Type type;
         final String defaultValue;
         final BuffConfig.Range range;
+        final List<String> choices;
         final StringBuilder description = new StringBuilder();
         String value;
 
-        Entry(String key, String value, String defaultValue, BuffConfig.Range range) {
+        Entry(String key, String value, String defaultValue, BuffConfig.Range range, List<String> choices) {
             this.key = key;
             this.value = value.trim();
             this.defaultValue = defaultValue;
             this.range = range;
+            this.choices = choices;
             // the default knows the type even if the file holds something invalid
             this.type = Type.of(defaultValue != null ? defaultValue : this.value);
         }
@@ -267,7 +273,7 @@ public class ConfigScreen extends Screen {
                         double number = Double.parseDouble(value.trim());
                         yield Double.isFinite(number) && inRange(number);
                     }
-                    case TEXT -> true;
+                    case TEXT -> choices == null || choices.stream().anyMatch(choice -> choice.equalsIgnoreCase(value.trim()));
                 };
             } catch (NumberFormatException e) {
                 return false;
@@ -285,7 +291,7 @@ public class ConfigScreen extends Screen {
                 return switch (type) {
                     case INTEGER, NUMBER -> Double.parseDouble(value.trim()) != Double.parseDouble(defaultValue);
                     case BOOLEAN -> !value.trim().equalsIgnoreCase(defaultValue);
-                    case TEXT -> !value.equals(defaultValue);
+                    case TEXT -> choices == null ? !value.equals(defaultValue) : !value.trim().equalsIgnoreCase(defaultValue);
                 };
             } catch (NumberFormatException e) {
                 return true;
@@ -304,7 +310,7 @@ public class ConfigScreen extends Screen {
             return switch (type) {
                 case BOOLEAN -> label() + ": true or false";
                 case INTEGER, NUMBER -> label() + (range == null ? ": a number" : ": " + format(range.min()) + " to " + format(range.max()));
-                case TEXT -> label();
+                case TEXT -> choices == null ? label() : label() + ": " + String.join(", ", choices);
             };
         }
 
