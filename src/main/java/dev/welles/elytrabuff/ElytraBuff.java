@@ -23,10 +23,10 @@ public final class ElytraBuff {
     public static final String MOD_ID = "elytrabuff";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    /** The energy bonus last sent to each player; players without the client mod are never in here. */
-    private static final Map<ServerPlayer, Double> SENT_BONUS = new WeakHashMap<>();
-    /** The energy bonus of the server this client is connected to, 0 on servers without the mod. */
-    private static volatile double clientBonus;
+    /** The flight settings last sent to each player; players without the client mod are never in here. */
+    private static final Map<ServerPlayer, FlightSettings> SENT_SETTINGS = new WeakHashMap<>();
+    /** The flight settings of the server this client is connected to, vanilla on servers without the mod. */
+    private static volatile FlightSettings clientSettings = FlightSettings.VANILLA;
     /** Loader specific networking. */
     private static Network network;
 
@@ -50,31 +50,45 @@ public final class ElytraBuff {
 
     public static void onServerTick(MinecraftServer server) {
         BuffConfig config = BuffConfig.get();
+        FlightSettings settings = FlightSettings.of(config);
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            syncBonus(player, config.energyBonus);
+            syncSettings(player, settings);
             ColdStart.tick(player, config);
+            if (SENT_SETTINGS.containsKey(player)) WingFlaps.tick(player, settings);
         }
     }
 
-    /** Sends the energy bonus to players with the client mod after joining and whenever it changes. */
-    private static void syncBonus(ServerPlayer player, double bonus) {
-        Double sent = SENT_BONUS.get(player);
-        if ((sent == null || sent != bonus) && network.canSend(player)) {
-            network.send(player, new BonusPayload(bonus));
-            SENT_BONUS.put(player, bonus);
+    /** Sends the flight settings to players with the client mod after joining and whenever they change. */
+    private static void syncSettings(ServerPlayer player, FlightSettings settings) {
+        if (!settings.equals(SENT_SETTINGS.get(player)) && network.canSend(player)) {
+            network.send(player, settings);
+            SENT_SETTINGS.put(player, settings);
         }
     }
 
-    public static void setClientBonus(double bonus) {
-        clientBonus = bonus;
+    public static void setClientSettings(FlightSettings settings) {
+        clientSettings = settings;
+        WingFlaps.resetClient();
+    }
+
+    /** Runs the wing flaps of the client's own player, every client tick while in a world. */
+    public static void onClientTick(Player player) {
+        WingFlaps.tickClient(player, clientSettings);
     }
 
     /**
-     * The energy bonus for the player's elytra flight. The client simulates its own flight with the bonus the server
-     * sent; the server uses the same value, so both agree, and vanilla physics for players without the client mod.
+     * The flight settings for the player's elytra flight. The client simulates its own flight with the settings the
+     * server sent; the server uses the same ones, so both agree, and vanilla physics for players without the client mod.
      */
-    private static double energyBonus(Player player) {
-        return player.level().isClientSide() ? clientBonus : SENT_BONUS.getOrDefault(player, 0.0);
+    private static FlightSettings settings(Player player) {
+        return player.level().isClientSide() ? clientSettings : SENT_SETTINGS.getOrDefault(player, FlightSettings.VANILLA);
+    }
+
+    /** Applies the energy bonus and the wing flaps to the movement of an elytra flight tick. */
+    public static Vec3 applyFlightBuffs(LivingEntity entity, Vec3 movement, double gravity) {
+        if (!(entity instanceof Player player)) return movement;
+        FlightSettings settings = settings(player);
+        return WingFlaps.applyFlap(player, applyEnergyBonus(movement, gravity, settings.energyBonus()), settings);
     }
 
     /**
@@ -85,9 +99,8 @@ public final class ElytraBuff {
      * @param movement the movement vanilla calculated for this tick
      * @param gravity  the gravity that applied to it, lower with Slow Falling
      */
-    public static Vec3 applyEnergyBonus(LivingEntity entity, Vec3 movement, double gravity) {
-        if (!(entity instanceof Player player) || movement.y >= 0.0) return movement;
-        double bonus = energyBonus(player);
+    private static Vec3 applyEnergyBonus(Vec3 movement, double gravity, double bonus) {
+        if (movement.y >= 0.0) return movement;
         double speedSqr = movement.lengthSqr();
         if (bonus <= 0.0 || speedSqr == 0.0) return movement;
         // kinetic energy is speed² / 2 per unit of mass

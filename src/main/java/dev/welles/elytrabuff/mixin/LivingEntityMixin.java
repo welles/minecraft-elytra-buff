@@ -15,7 +15,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import org.spongepowered.asm.mixin.injection.Slice;
 //?}
 
-/** Adds the energy bonus to the movement of every elytra flight tick, right after vanilla's drag. */
+/** Adds the energy bonus and wing flaps to the movement of every elytra flight tick, right after vanilla's drag. */
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
     //? if >=1.21.2 {
@@ -23,8 +23,8 @@ public abstract class LivingEntityMixin {
     protected abstract double getEffectiveGravity();
 
     @ModifyReturnValue(method = "updateFallFlyingMovement", at = @At("RETURN"))
-    private Vec3 elytrabuff$energyBonus(Vec3 movement) {
-        return ElytraBuff.applyEnergyBonus((LivingEntity) (Object) this, movement, getEffectiveGravity());
+    private Vec3 elytrabuff$flightBuffs(Vec3 movement) {
+        return ElytraBuff.applyFlightBuffs((LivingEntity) (Object) this, movement, getEffectiveGravity());
     }
     *///?} else {
     /** The elytra branch of {@code travel} is the first one that checks {@code isFallFlying}, its drag is the first multiply after it. */
@@ -33,8 +33,8 @@ public abstract class LivingEntityMixin {
         slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isFallFlying()Z")),
         at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;multiply(DDD)Lnet/minecraft/world/phys/Vec3;", ordinal = 0)
     )
-    private Vec3 elytrabuff$energyBonus(Vec3 movement, @Local(ordinal = 0) double gravity) {
-        return ElytraBuff.applyEnergyBonus((LivingEntity) (Object) this, movement, gravity);
+    private Vec3 elytrabuff$flightBuffs(Vec3 movement, @Local(ordinal = 0) double gravity) {
+        return ElytraBuff.applyFlightBuffs((LivingEntity) (Object) this, movement, gravity);
     }
     //?}
 }

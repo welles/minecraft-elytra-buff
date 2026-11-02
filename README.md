@@ -1,7 +1,7 @@
 # Elytra Buff
 
 A Minecraft mod for **Fabric** and **NeoForge** (Minecraft 1.21.1 – 26.3) that makes flying with an elytra easier
-to start and lets a flight go on forever.
+to start, lets a flight go on forever and lets you flap the wings for extra speed.
 
 - **Cold start** – take off from the ground without fireworks or a cliff. With an elytra on, crouch while standing
   on the ground:
@@ -16,6 +16,11 @@ to start and lets a flight go on forever.
   height (20 % more by default). Diving and pulling up again now recovers all the speed and height of the flight, and
   with a good rhythm (dive at about 30–40°, climb at about 40–50°) you slowly climb higher. Climbing works like in
   vanilla, and very steep dives still lose more to drag than they gain, so flying still needs a bit of skill.
+- **Wing flaps** – crouch while flying to flap the wings: like a weak firework rocket, flapping pushes you along the
+  direction you look, with a flapping sound and a puff of clouds at every wing beat. The push gets weaker
+  the faster you already fly and never gets you as fast as a firework.
+  - The wings tire out after 3 seconds of flapping (configurable) and need 5 seconds (configurable) to recover.
+  - Releasing crouch earlier lets them recover from the time flapped so far, without waiting for the full cooldown.
 
 No items, blocks or textures are added.
 
@@ -24,9 +29,9 @@ No items, blocks or textures are added.
 Install the mod on the **server** (or in singleplayer, which runs both). The cold start runs entirely on the server,
 so it works for every player, even without the mod on their client.
 
-The endless flight needs the mod on the **client** as well, since the client simulates the player's own flight. The
-server sends its energy bonus to clients with the mod. Players without it fly like in vanilla, and a client with the
-mod on a server without it flies like in vanilla too. On Fabric, the mod requires
+The endless flight and the wing flaps need the mod on the **client** as well, since the client simulates the player's
+own flight. The server sends its settings to clients with the mod. Players without it fly like in vanilla, and a
+client with the mod on a server without it flies like in vanilla too. On Fabric, the mod requires
 [Fabric API](https://modrinth.com/mod/fabric-api).
 
 ## Configuration
@@ -42,6 +47,10 @@ All settings are decided by the server: in multiplayer the server's values apply
 | `chargeTime`   | `3.0`   | How long to crouch until the cold start is charged, in seconds. Smoke rises after 1 second, flames and a hiss show that it is charged. `0.5` to `30`.     |
 | `launchHeight` | `10.0`  | How high a cold start throws the player, in blocks. `1` to `64`.                                                                                            |
 | `energyBonus`  | `0.2`   | Extra speed gained from losing height while flying, as a fraction of the energy the descent gives in vanilla. `0.2` = 20 % more, `0` = vanilla. `0` to `2`. |
+| `wingFlaps`    | `true`  | Crouch while flying to flap the wings and speed up, like with a weak firework rocket. `false` = crouching in flight does nothing special.                   |
+| `flapStrength` | `0.04`  | Speed each tick of flapping adds, in blocks per tick. Less the faster you fly, flapping never gets faster than 1.5 blocks per tick. `0` to `0.5`.            |
+| `flapTime`     | `3.0`   | How long the wings can flap at once, in seconds. `0.5` to `30`.                                                                                             |
+| `flapCooldown` | `5.0`   | How long tired out wings take to recover before they can flap again, in seconds. `0` to `60`.                                                               |
 
 ## Building
 

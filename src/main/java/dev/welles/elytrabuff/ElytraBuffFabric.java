@@ -15,7 +15,7 @@ public class ElytraBuffFabric implements ModInitializer {
         ElytraBuff.init(FabricLoader.getInstance().getConfigDir(), new ElytraBuff.Network() {
             @Override
             public boolean canSend(ServerPlayer player) {
-                return ServerPlayNetworking.canSend(player, BonusPayload.TYPE);
+                return ServerPlayNetworking.canSend(player, FlightSettings.TYPE);
             }
 
             @Override
@@ -25,9 +25,9 @@ public class ElytraBuffFabric implements ModInitializer {
         });
 
         //? if >=26.1 {
-        /*PayloadTypeRegistry.clientboundPlay().register(BonusPayload.TYPE, BonusPayload.CODEC);
+        /*PayloadTypeRegistry.clientboundPlay().register(FlightSettings.TYPE, FlightSettings.CODEC);
         *///?} else {
-        PayloadTypeRegistry.playS2C().register(BonusPayload.TYPE, BonusPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(FlightSettings.TYPE, FlightSettings.CODEC);
         //?}
         ServerTickEvents.END_SERVER_TICK.register(ElytraBuff::onServerTick);
     }

@@ -16,7 +16,7 @@ public class ElytraBuffNeoForge {
         ElytraBuff.init(FMLPaths.CONFIGDIR.get(), new ElytraBuff.Network() {
             @Override
             public boolean canSend(ServerPlayer player) {
-                return player.connection.hasChannel(BonusPayload.TYPE);
+                return player.connection.hasChannel(FlightSettings.TYPE);
             }
 
             @Override
@@ -32,7 +32,7 @@ public class ElytraBuffNeoForge {
     // The handler runs on the main thread and only on clients.
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
         event.registrar("1").optional()
-            .playToClient(BonusPayload.TYPE, BonusPayload.CODEC, (payload, context) -> ElytraBuff.setClientBonus(payload.energyBonus()));
+            .playToClient(FlightSettings.TYPE, FlightSettings.CODEC, (payload, context) -> ElytraBuff.setClientSettings(payload));
     }
 }
 *///?}
