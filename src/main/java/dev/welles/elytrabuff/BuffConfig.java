@@ -28,8 +28,8 @@ public final class BuffConfig {
 
     public boolean coldStart = true;
     public double chargeTime = 3.0;
-    public double launchHeight = 10.0;
-    public double energyBonus = 0.2;
+    public double launchHeight = 16.0;
+    public double energyBonus = 0.5;
     public boolean wingFlaps = true;
     public double flapStrength = 0.04;
     public double flapTime = 3.0;
@@ -45,7 +45,7 @@ public final class BuffConfig {
                       1 second, drifting feathers and rustling wings show that it is charged. 0.5 to 30.
         launchHeight  How high a cold start throws the player, in blocks. 1 to 64.
         energyBonus   Extra speed gained from losing height while flying, as a fraction of the energy that the descent
-                      gives in vanilla. 0.2 = 20 % more, enough to keep flying forever by diving and pulling up again.
+                      gives in vanilla. 0.5 = 50 % more, enough to keep flying forever by diving and pulling up again.
                       0 = vanilla. 0 to 2. Only applies to players that have the mod installed on their client.
         wingFlaps     true = crouch while flying to flap the wings and speed up, like with a weak firework rocket.
                       Only applies to players that have the mod installed on their client.
