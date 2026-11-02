@@ -15,6 +15,9 @@
     ],
     "client": [
       "dev.welles.elytrabuff.ElytraBuffFabricClient"
+    ],
+    "modmenu": [
+      "dev.welles.elytrabuff.ElytraBuffModMenu"
     ]
   },
   "mixins": [
