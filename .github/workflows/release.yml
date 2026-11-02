@@ -32,3 +32,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.event.release.tag_name }}
         run: gh release upload "$TAG" jars/*.jar --repo "$GITHUB_REPOSITORY" --clobber
+
+  curseforge:
+    name: CurseForge
+    needs: upload
+    uses: ./.github/workflows/curseforge.yml
+    with:
+      tag: ${{ github.event.release.tag_name }}
+    secrets: inherit

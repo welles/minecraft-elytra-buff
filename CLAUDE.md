@@ -20,5 +20,9 @@ release:
    `gh release create vx.y.z -R welles/minecraft-elytra-buff --target main --title x.y.z --notes-file <notes>`
 3. Publishing the release runs `release.yml`, which builds every node with the version from the tag and attaches
    the jars. Check that all of them are attached. `mod.version` in the repo stays `0.0.0-dev`.
+4. After attaching the jars, `release.yml` calls `curseforge.yml`, which uploads them to CurseForge with the changelog
+   section, if the repository variable `CURSEFORGE_PROJECT_ID` and the secret `CURSEFORGE_TOKEN` are set. It can also
+   be started by hand for an existing release: `gh workflow run curseforge.yml -R welles/minecraft-elytra-buff -f tag=vx.y.z`.
+   Every run uploads new files, so do not run it twice for the same release.
 
 New features are a minor release, fixes only a patch release.
