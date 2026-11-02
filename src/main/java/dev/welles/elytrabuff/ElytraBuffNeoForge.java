@@ -32,7 +32,8 @@ public class ElytraBuffNeoForge {
     // The handler runs on the main thread and only on clients.
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
         event.registrar("1").optional()
-            .playToClient(FlightSettings.TYPE, FlightSettings.CODEC, (payload, context) -> ElytraBuff.setClientSettings(payload));
+            .playToClient(FlightSettings.TYPE, FlightSettings.CODEC, (payload, context) -> ElytraBuff.setClientSettings(payload))
+            .playToClient(FlapPayload.TYPE, FlapPayload.CODEC, (payload, context) -> WingFlaps.setClientFlapping(payload));
     }
 }
 *///?}

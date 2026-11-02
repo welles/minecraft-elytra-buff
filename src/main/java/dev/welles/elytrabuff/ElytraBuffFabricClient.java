@@ -11,6 +11,7 @@ public class ElytraBuffFabricClient implements ClientModInitializer {
     public void onInitializeClient() {
         // Handlers run on the client thread; registering the receiver lets the server know the client has the mod
         ClientPlayNetworking.registerGlobalReceiver(FlightSettings.TYPE, (payload, context) -> ElytraBuff.setClientSettings(payload));
+        ClientPlayNetworking.registerGlobalReceiver(FlapPayload.TYPE, (payload, context) -> WingFlaps.setClientFlapping(payload));
         // the next server sends its own settings, or none if it does not have the mod
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ElytraBuff.setClientSettings(FlightSettings.VANILLA));
         ClientTickEvents.END_CLIENT_TICK.register(client -> {

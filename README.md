@@ -19,6 +19,7 @@ to start, lets a flight go on forever and lets you flap the wings for extra spee
 - **Wing flaps** – crouch while flying to flap the wings: like a weak firework rocket, flapping pushes you along the
   direction you look, with a flapping sound and a puff of clouds at every wing beat. The push gets weaker
   the faster you already fly and never gets you as fast as a firework.
+  The wings visibly beat, for yourself in third person and for other players that have the mod on their client.
   - The wings tire out after 3 seconds of flapping (configurable) and need 5 seconds (configurable) to recover.
   - Releasing crouch earlier lets them recover from the time flapped so far, without waiting for the full cooldown.
 

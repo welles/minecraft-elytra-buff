@@ -68,8 +68,11 @@ tasks {
 
         val mixinJava = "JAVA_${requiredJava.majorVersion}"
         val mixins = listOf("LivingEntityMixin").joinToString(", ") { "\"$it\"" }
+        // The elytra animation moved out of the model into the entity in 1.21.2
+        val clientMixins = listOf(if (sc.current.parsed < "1.21.2") "ElytraModelMixin" else "ElytraAnimationStateMixin").joinToString(", ") { "\"$it\"" }
         inputs.property("mixins", mixins)
-        filesMatching("*.mixins.json") { expand("java" to mixinJava, "mixins" to mixins) }
+        inputs.property("clientMixins", clientMixins)
+        filesMatching("*.mixins.json") { expand("java" to mixinJava, "mixins" to mixins, "clientMixins" to clientMixins) }
 
         exclude("META-INF/neoforge.mods.toml")
     }

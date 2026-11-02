@@ -3,6 +3,7 @@
   "package": "dev.welles.elytrabuff.mixin",
   "compatibilityLevel": "${java}",
   "mixins": [${mixins}],
+  "client": [${clientMixins}],
   "injectors": {
     "defaultRequire": 1
   }

@@ -26,8 +26,10 @@ public class ElytraBuffFabric implements ModInitializer {
 
         //? if >=26.1 {
         /*PayloadTypeRegistry.clientboundPlay().register(FlightSettings.TYPE, FlightSettings.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(FlapPayload.TYPE, FlapPayload.CODEC);
         *///?} else {
         PayloadTypeRegistry.playS2C().register(FlightSettings.TYPE, FlightSettings.CODEC);
+        PayloadTypeRegistry.playS2C().register(FlapPayload.TYPE, FlapPayload.CODEC);
         //?}
         ServerTickEvents.END_SERVER_TICK.register(ElytraBuff::onServerTick);
     }
