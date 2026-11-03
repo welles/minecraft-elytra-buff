@@ -1,3 +1,7 @@
+---
+summary: Take off with one mighty wing beat, flap for speed and glide forever – no fireworks needed.
+---
+
 > ⚠️ **This project is AI-generated.** The code, this description and the icon of this mod were created with generative AI (Claude by Anthropic), directed by the author. Please keep that in mind, and report any problems on GitHub.
 
 # Elytra Buff
