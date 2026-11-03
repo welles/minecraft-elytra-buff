@@ -123,7 +123,9 @@ for jar in "$1"/*.jar; do
         --argjson gameVersions "$(printf '%s\n' "${ids[@]}" | jq -s 'map(tonumber)')" \
         --argjson relations "$relations" \
         '{changelog: $changelog, changelogType: "markdown", displayName: $displayName, gameVersions: $gameVersions,
-          releaseType: "release", relations: {projects: $relations}}')
+          releaseType: "release"}
+         # CurseForge rejects an empty list of related projects
+         + if $relations == [] then {} else {relations: {projects: $relations}} end')
     echo "$(basename "$jar"): $loader_name, Minecraft ${names[*]}, ${ENVIRONMENTS:-Client Server}"
     if [ "${DRY_RUN:-}" = 1 ]; then
         echo "$metadata"

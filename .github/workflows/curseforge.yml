@@ -14,6 +14,10 @@ on:
         description: Release tag to upload, e.g. v1.1.0
         type: string
         required: true
+      files:
+        description: Only upload the jars matching this pattern, e.g. `*-neoforge-*` to finish an interrupted upload
+        type: string
+        default: "*"
 
 permissions:
   contents: read
@@ -31,8 +35,9 @@ jobs:
       - name: Download jars
         env:
           GH_TOKEN: ${{ github.token }}
+          FILES: ${{ inputs.files || '*' }}
           TAG: ${{ inputs.tag }}
-        run: gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern '*.jar' --dir jars
+        run: gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern "$FILES.jar" --dir jars
 
       - name: Upload jars
         env:
