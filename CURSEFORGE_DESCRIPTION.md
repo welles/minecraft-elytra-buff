@@ -2,7 +2,7 @@
 summary: Take off with one mighty wing beat, flap for speed and glide forever – no fireworks needed. Crouch to launch into the sky, flap your wings in flight, and turn every dive into new speed, with animated wings for Fabric and NeoForge.
 ---
 
-> ⚠️ **This project is AI-generated.** The code, this description and the icon of this mod were created with generative AI (Claude by Anthropic), directed by the author. Please keep that in mind, and report any problems on GitHub.
+> ⚠️ **Disclaimer: This project is AI-generated.** The code, this description and the icon of this mod were created with generative AI (Claude by Anthropic), directed by me. While I am a professional software developer, I am not a Java developer, so I use generative AI to build mods that my friends and I want to play with, and I like to share the ones that work well with everyone. I understand if you do not want to support the use of generative AI, which is why I put this disclaimer here. If you run into any problems, please report them on GitHub.
 
 # Elytra Buff
 
