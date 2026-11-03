@@ -4,6 +4,7 @@
 # The jars are named `<mod id>-<loader>-<version>+<node>.jar`. A jar supports the Minecraft versions in the
 # `mod.mc_compat` range of its Fabric node in stonecutter.properties.toml (both loaders of a node share the range),
 # resolved against the release versions CurseForge knows. The changelog is the section of the version in CHANGELOG.md.
+# ENVIRONMENTS names the sides the mod runs on, `Client Server` by default.
 # With DRY_RUN=1 the files are only listed with their metadata.
 set -euo pipefail
 
@@ -58,11 +59,22 @@ minecraft=$(jq -r --argjson types "$types" '
     [$types[] | select(.slug | test("^minecraft-[0-9]")) | .id] as $ids
     | .[] | select(.gameVersionTypeID as $type | $ids | index($type)) | select(.name | test("^[0-9]+(\\.[0-9]+)+$"))
     | "\(.id) \(.name)"' <<<"$versions")
-loader_id() {
-    jq -r --arg name "$1" --argjson types "$types" '
-        [$types[] | select(.slug == "modloader") | .id] as $ids
+# version_id TYPE NAME: the id of the game version NAME of the version type with the slug TYPE
+version_id() {
+    jq -r --arg slug "$1" --arg name "$2" --argjson types "$types" '
+        [$types[] | select(.slug == $slug) | .id] as $ids
         | first(.[] | select((.gameVersionTypeID as $type | $ids | index($type)) and .name == $name) | .id) // empty' <<<"$versions"
 }
+
+environments=()
+for environment in ${ENVIRONMENTS:-Client Server}; do
+    id=$(version_id environment "$environment")
+    if [ -z "$id" ]; then
+        echo "CurseForge knows no environment $environment" >&2
+        exit 1
+    fi
+    environments+=("$id")
+done
 
 for jar in "$1"/*.jar; do
     name=$(basename "$jar" .jar)
@@ -98,12 +110,12 @@ for jar in "$1"/*.jar; do
         echo "$jar: CurseForge knows no Minecraft version in \"$range\"" >&2
         exit 1
     fi
-    loader_game_version=$(loader_id "$loader_name")
+    loader_game_version=$(version_id modloader "$loader_name")
     if [ -z "$loader_game_version" ]; then
         echo "CurseForge knows no loader $loader_name" >&2
         exit 1
     fi
-    ids+=("$loader_game_version")
+    ids+=("$loader_game_version" "${environments[@]}")
 
     metadata=$(jq -n \
         --arg changelog "$changelog" \
@@ -112,7 +124,7 @@ for jar in "$1"/*.jar; do
         --argjson relations "$relations" \
         '{changelog: $changelog, changelogType: "markdown", displayName: $displayName, gameVersions: $gameVersions,
           releaseType: "release", relations: {projects: $relations}}')
-    echo "$(basename "$jar"): $loader_name, Minecraft ${names[*]}"
+    echo "$(basename "$jar"): $loader_name, Minecraft ${names[*]}, ${ENVIRONMENTS:-Client Server}"
     if [ "${DRY_RUN:-}" = 1 ]; then
         echo "$metadata"
         continue

@@ -22,7 +22,7 @@ jobs:
   upload:
     name: Upload to CurseForge
     # Needs the repository variable CURSEFORGE_PROJECT_ID and the secret CURSEFORGE_TOKEN, repositories without a
-    # CurseForge project skip the upload
+    # CurseForge project skip the upload. CURSEFORGE_ENVIRONMENTS can limit the sides, e.g. to `Server`
     if: vars.CURSEFORGE_PROJECT_ID != ''
     runs-on: ubuntu-latest
     steps:
@@ -38,5 +38,6 @@ jobs:
         env:
           CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
           PROJECT_ID: ${{ vars.CURSEFORGE_PROJECT_ID }}
+          ENVIRONMENTS: ${{ vars.CURSEFORGE_ENVIRONMENTS }}
           TAG: ${{ inputs.tag }}
         run: .github/scripts/curseforge-upload.sh jars
