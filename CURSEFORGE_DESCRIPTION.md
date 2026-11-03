@@ -1,5 +1,5 @@
 ---
-summary: Take off with one mighty wing beat, flap for speed and glide forever – no fireworks needed.
+summary: Take off with one mighty wing beat, flap for speed and glide forever – no fireworks needed. Crouch to launch into the sky, flap your wings in flight, and turn every dive into new speed, with animated wings for Fabric and NeoForge.
 ---
 
 > ⚠️ **This project is AI-generated.** The code, this description and the icon of this mod were created with generative AI (Claude by Anthropic), directed by the author. Please keep that in mind, and report any problems on GitHub.
