@@ -20,9 +20,13 @@ With an elytra on, crouch while standing on the ground to gather strength for on
 
 Release crouch to beat the wings down and be thrown 16 blocks into the air in a gust of wind and feathers, then press jump to open the elytra. Releasing early, leaving the ground, taking off the elytra or getting into water cancels the charge.
 
+![Charging and launching a cold start](https://raw.githubusercontent.com/welles/minecraft-elytra-buff/main/media/cold-start.gif)
+
 ### Wing flaps
 
 Crouch while flying to flap the wings: like a weak firework rocket, flapping pushes you along the direction you look, with a flapping sound at every wing beat. The wings tire out after 3 seconds and need 5 seconds to recover; releasing crouch earlier lets them recover from the time flapped so far. Flapping never gets you as fast as a firework.
+
+![Flapping the wings while gliding](https://raw.githubusercontent.com/welles/minecraft-elytra-buff/main/media/wing-flaps.gif)
 
 ### Endless flight
 

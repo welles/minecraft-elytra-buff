@@ -29,10 +29,27 @@ dependencies {
     modCompileOnly("com.terraformersmc:modmenu:${property("deps.modmenu")}") { isTransitive = false }
 }
 
+// Recordings of the mod in action: a client game test in src/gametest plays scenes and saves every frame as a
+// screenshot, scripts/record-gifs.sh turns them into GIFs. Only on one node, the code is not in the mod jar.
+if (sc.current.version == "1.21.11") {
+    fabricApi {
+        configureTests {
+            createSourceSet = true
+            modId = "elytrabuff-recordings"
+            enableGameTests = false
+            enableClientGameTests = true
+            eula = true
+        }
+    }
+    // The cold start sends the motion packet to the client directly, which the test's network synchronizer rejects
+    loom.runs.named("clientGameTest") { property("fabric.client.gametest.disableNetworkSynchronizer", "true") }
+}
+
 loom {
     fabricModJsonPath = rootProject.file("src/main/resources/fabric.mod.json")
 
-    runConfigs.all {
+    // The client game test clears its run directory before every run, so it keeps its own one in build/
+    runConfigs.matching { it.name != "clientGameTest" }.configureEach {
         preferGradleTask = true
         generateRunConfig = true
         runDirectory = rootProject.file("run")

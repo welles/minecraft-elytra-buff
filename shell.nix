@@ -22,7 +22,8 @@ let
   ];
 in
 pkgs.mkShell {
-  packages = [ pkgs.jdk25 ];
+  # xvfb-run and ffmpeg record the GIFs of the mod, see scripts/record-gifs.sh
+  packages = [ pkgs.jdk25 pkgs.xvfb-run pkgs.ffmpeg ];
 
   LD_LIBRARY_PATH = "/run/opengl-driver/lib:${pkgs.lib.makeLibraryPath runtimeLibs}";
 }

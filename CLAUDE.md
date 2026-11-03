@@ -23,6 +23,21 @@ the same commit as the README and tell the user to paste it into CurseForge.
 - Write it for players: what the mod does, how to install it, what can be configured; no build instructions.
 - Keep every paragraph and list item on a single line, since the CurseForge editor may turn line breaks into breaks.
 
+## Recordings
+
+The GIFs in `media/` show the mod in action and are embedded in the README and the CurseForge description. They are
+recorded by the client game test in `src/gametest/` (only on the 1.21.11-fabric node, not part of the mod jar), which
+plays each scene in a headless Minecraft and saves every tick as a frame:
+
+    nix-shell --run scripts/record-gifs.sh
+
+Record them again and check a few frames whenever a change affects what the scenes show (wing animation, particles,
+launch height, flight). Taking a screenshot advances the game by one tick, so one frame is one tick.
+
+Every GIF must be at most 2 MB (2,000,000 bytes), CurseForge does not accept larger ones. The script picks the best
+frame rate and palette that fit and fails otherwise; then shorten the scene or calm it down (a plain floor, few
+camera moves) rather than lowering the limit.
+
 ## Releases
 
 1. Check that the `Build` workflow run of the latest commit on `main` is green. If a node fails while resolving

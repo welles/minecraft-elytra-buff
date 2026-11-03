@@ -28,6 +28,10 @@ to start, lets a flight go on forever and lets you flap the wings for extra spee
 The wings move along with the cold start and the wing flaps, for yourself in third person and for other players.
 This needs the mod on the client of the player watching.
 
+| Cold start: crouch to charge, release to launch, then glide away | Wing flaps: crouch while gliding to flap and speed up |
+|---|---|
+| ![Charging and launching a cold start](media/cold-start.gif) | ![Flapping the wings while gliding](media/wing-flaps.gif) |
+
 No items, blocks or textures are added.
 
 ## Installation

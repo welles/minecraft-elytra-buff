@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "elytrabuff-recordings",
+  "version": "1.0.0",
+  "name": "Elytra Buff recordings",
+  "description": "Plays scenes of Elytra Buff in a client game test and saves every frame, to make GIFs of the mod in action.",
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "fabric-client-gametest": [
+      "dev.welles.elytrabuff.recordings.ElytraBuffRecordings"
+    ]
+  },
+  "depends": {
+    "elytrabuff": "*"
+  }
+}
