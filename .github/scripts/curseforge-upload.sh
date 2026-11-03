@@ -4,6 +4,7 @@
 # The jars are named `<mod id>-<loader>-<version>+<node>.jar`. A jar supports the Minecraft versions in the
 # `mod.mc_compat` range of its Fabric node in stonecutter.properties.toml (both loaders of a node share the range),
 # resolved against the release versions CurseForge knows. The changelog is the section of the version in CHANGELOG.md.
+# Fabric jars declare Fabric API and Mod Menu as related projects as far as their fabric.mod.json uses them.
 # ENVIRONMENTS names the sides the mod runs on, `Client Server` by default.
 # With DRY_RUN=1 the files are only listed with their metadata.
 set -euo pipefail
@@ -84,7 +85,10 @@ for jar in "$1"/*.jar; do
     case $loader in
         fabric)
             loader_name=Fabric
-            relations='[{"slug": "fabric-api", "type": "requiredDependency"}, {"slug": "modmenu", "type": "optionalDependency"}]'
+            # Fabric API if the mod depends on it, Mod Menu if the mod has a config screen for it
+            relations=$(unzip -p "$jar" fabric.mod.json | jq -c '[
+                if .depends["fabric-api"] then {slug: "fabric-api", type: "requiredDependency"} else empty end,
+                if .entrypoints.modmenu then {slug: "modmenu", type: "optionalDependency"} else empty end]')
             ;;
         neoforge)
             loader_name=NeoForge
